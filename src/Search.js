@@ -2,9 +2,23 @@ import React from 'react';
 
 class Search extends React.Component{
 
-  state = {
-    person: ''
+  constructor(){
+    super();
+    this.state = {
+      person: '',
+      results: []
+    }
   }
+
+
+  async getResults(){
+    const url = `https://swapi.co/api/people/?search=${this.state.person}`
+    const response = await fetch(url);
+    const data = await response.json();
+    this.setState({results: data.results[0].name});
+    console.log(this.state.results);
+  }
+
 
   handleChange = (event) => {
     this.setState({
@@ -14,16 +28,23 @@ class Search extends React.Component{
 
   handleSubmit = event => {
     event.preventDefault();
-    
+    this.getResults();
+    console.log(this.state.person)
   }
 
 
   render(){
+    const {person} = this.state.person
      return (
-      <div className="search">
+       <div>
+      <div className="search" >
         <label htmlFor="search">Search:</label>
-        <input type="text" value="" />
-        <button  >Go!</button>
+        <input type="text" value={person} onChange={this.handleChange} />
+        <button type="button" onClick={this.handleSubmit} >Go!</button>
+      </div>
+      <div className="tempResult">
+        {this.state.results}
+      </div>
       </div>
     )
   }
